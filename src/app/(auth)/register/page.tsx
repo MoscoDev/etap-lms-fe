@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import useRegister from "./use-register";
 
 export type SignupForm = {
@@ -30,7 +28,7 @@ const RegisterPage = () => {
   const formSchema = z
     .object({
       email: z.string().email(),
-      username: z.string().min(3).max(20),
+      username: z.string().min(3,{ message: "Username must be at least 8 characters" }).max(40,{message: "Username must cannot more than 40 characters"}),
       password: z
         .string()
         .min(8, { message: "Password must be at least 8 characters" })
@@ -61,7 +59,6 @@ const RegisterPage = () => {
     },
     resolver: zodResolver(formSchema),
   });
-  const router = useRouter();
   const onSubmit = async (data: SignupForm) => {
     await handleRegister(data);
   };
@@ -163,7 +160,7 @@ const RegisterPage = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-10 bg-[#D40C4E]">
+            <Button type="submit" className="w-full mt-10 bg-[#D40C4E]" disabled={!form.formState.isDirty || !form.formState.isValid || form.formState.isSubmitting}>
               {loading ? "signing up" : "Sign up"}
             </Button>
           </form>

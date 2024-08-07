@@ -51,6 +51,7 @@ const SubjectPage = (props: Props) => {
     formState: { errors },
     watch,
     reset,
+    formState
   } = useForm<CreateSubject>({
     resolver: zodResolver(subjectSchema),
   });
@@ -178,7 +179,7 @@ const SubjectPage = (props: Props) => {
                     </div>
                   </div>
                   <SheetFooter>
-                    <Button type="submit">Create Subject</Button>
+                    <Button type="submit"  disabled={!formState.isDirty || !formState.isValid || formState.isSubmitting}>Create Subject</Button>
                   </SheetFooter>
                 </form>
               </SheetContent>

@@ -119,7 +119,7 @@ const LoginPage = (props: Props): JSX.Element => {
                 Forgot password?
               </Link>
             </div>
-            <Button type="submit" className="w-full mt-10 bg-[#D40C4E]">
+            <Button type="submit" className="w-full mt-10 bg-[#D40C4E]"  disabled={!form.formState.isDirty || !form.formState.isValid || form.formState.isSubmitting}>
               Log in
             </Button>
           </form>
