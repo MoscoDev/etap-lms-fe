@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LeaderBoard from "@/components/custom/leader-boder";
+import NoContentFallback from "@/components/custom/shared/no-content";
 
 const topicSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -73,7 +74,8 @@ export default function Topics() {
 
   return (
     <div className="max-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-8 w-full max-w-[1400px] mx-auto py-12 md:py-8 px-4 md:px-6">
+     {topics.length > 0 ? <>
+     <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-8 w-full max-w-[1400px] mx-auto py-12 md:py-8 px-4 md:px-6">
         <div className="flex flex-col gap-3">
           <div className="rounded-xl overflow-hidden aspect-video relative">
             <video
@@ -217,6 +219,92 @@ export default function Topics() {
         </div>
       </div>
       <LeaderBoard />
+      </>: <NoContentFallback title="Topic">
+         <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline">Create Topic</Button>
+            </SheetTrigger>
+            <SheetContent className="w-full max-w-md">
+              <SheetHeader>
+                <SheetTitle>Create Topic</SheetTitle>
+                <SheetDescription>
+                  Fill out the form to create a new topic.
+                </SheetDescription>
+              </SheetHeader>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="col-span-4">
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        placeholder="Enter topic title"
+                        {...register("title")}
+                      />
+                      {errors.title && (
+                        <p className="text-red-500 text-sm">
+                          {errors.title.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="col-span-4">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        id="description"
+                        placeholder="Enter topic description"
+                        className="min-h-[100px]"
+                        {...register("description")}
+                      />
+                      {errors.description && (
+                        <p className="text-red-500 text-sm">
+                          {errors.description.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="col-span-4">
+                      <Label htmlFor="video_url">Video URL</Label>
+                      <Input
+                        id="video_url"
+                        placeholder="Enter topic video URL"
+                        {...register("video_url")}
+                      />
+                      {errors.video_url && (
+                        <p className="text-red-500 text-sm">
+                          {errors.video_url.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {videoUrl && isValidVideoUrl && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="col-span-4">
+                      <video
+                        className="w-full mt-4"
+                        controls
+                        src={videoUrl}
+                      ></video>
+                    </div>
+                    </div>
+                  )}
+                </div>
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <Button type="submit">
+                      <div className="flex items-center gap-3">
+                        <PlusCircleIcon className="w-5 h-5" />
+                        <span>Add Topic</span>
+                      </div>
+                    </Button>
+                  </SheetClose>
+                </SheetFooter>
+              </form>
+            </SheetContent>
+          </Sheet>
+        </NoContentFallback>}
     </div>
   );
 }

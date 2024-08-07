@@ -63,7 +63,6 @@ const RegisterPage = () => {
   });
   const router = useRouter();
   const onSubmit = async (data: SignupForm) => {
-    console.log("form submitted: ", data);
     await handleRegister(data);
   };
 

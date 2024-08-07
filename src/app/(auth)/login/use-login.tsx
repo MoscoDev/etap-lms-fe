@@ -11,12 +11,10 @@ export default function useLogin() {
 
   const handleLogin = async (payload: LoginForm) => {
     setLoading(true);
-    console.log("first");
     try {
       const { data } = await axiosReq.post("/auth/login", payload, {
         headers: { "content-type": "application/json" },
       });
-      console.log(data);
       localStorage.setItem("token", data.access_token);
       sessionStorage.setItem("user", JSON.stringify({username:data.username, role: data.role}))
       router.push("./dashboard");

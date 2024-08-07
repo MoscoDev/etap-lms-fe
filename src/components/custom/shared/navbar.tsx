@@ -1,14 +1,9 @@
-import Link from "next/link";
+"use client"
 import {
   ChevronDown,
-  Home,
-  LineChart,
-  Package,
-  Package2,
+  HomeIcon,
+  Package2Icon,
   PanelLeft,
-  Search,
-  ShoppingCart,
-  Users2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,11 +13,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AvatarWithFallBack from "@/components/custom/avatar-with-fall-back-text";
+import { usePathname, useRouter } from "next/navigation";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
+import { useEffect, useState } from "react";
 
-type Props = {};
+type Props = {username : string};
 
 /**
  * Renders the navigation bar component.
@@ -30,12 +27,17 @@ type Props = {};
  * @param {Props} props - The component props.
  * @returns {JSX.Element} The rendered navigation bar.
  */
-const Navbar = (props: Props): JSX.Element => {
+const Navbar = ({username}: Props): JSX.Element => {
+  const router = useRouter()
+ const handleLogout = ()=>{
+  localStorage.clear()
+  router.push('/login')
+ }
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 justify-end">
-        <AvatarWithFallBack fallBackText="NN" imageUrl="" />
-        <UserMenu />
+        <AvatarWithFallBack fallBackText={username.charAt(0).toUpperCase()} imageUrl="" />
+        <UserMenu  handleLogout={handleLogout} />
         <Sheet>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
@@ -52,43 +54,53 @@ const Navbar = (props: Props): JSX.Element => {
   );
 };
 
-const NavMenuItems = () => (
-  <nav className="grid gap-6 text-lg font-medium">
-    <NavMenuItem text="Acme Inc" icon={Package2} />
-    <NavMenuItem text="Dashboard" icon={Home} />
-    <NavMenuItem text="Orders" icon={ShoppingCart} />
-    <NavMenuItem text="Products" icon={Package} />
-    <NavMenuItem text="Customers" icon={Users2} />
-    <NavMenuItem text="Settings" icon={LineChart} />
-  </nav>
-);
+const NavMenuItems = () => {
+  const navigationItems = [
+    {
+      icon: HomeIcon,
+      href: '/dashboard',
+      tooltip: 'Home',
+    },
+    {
+      icon: Package2Icon,
+      href: '/subjects',
+      tooltip: 'Subjects',
+    },
+  ];
+  const currentPath = usePathname();
+  return (
 
-const NavMenuItem = ({
-  text,
-  icon: Icon,
-}: {
-  text: string;
-  icon: React.FC;
-}) => (
-  <Link
-    href="#"
-    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-  >
-    <Icon />
-    {text}
-  </Link>
-);
+    <nav className="grid gap-6 text-lg font-medium">
 
-const UserMenu = () => (
+      {navigationItems.map(({ icon, href, tooltip, isActive }: any, id) => (
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink href={href}>{tooltip}</NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      ))}
+    </nav>
+  )
+}
+
+
+
+/**
+ * Renders a user menu dropdown with a logout option.
+ *
+ * @param {Object} props - The component props.
+ * @param {Function} props.handleLogout - The function to handle user logout.
+ * @return {JSX.Element} The user menu dropdown component.
+ */
+const UserMenu = ({ handleLogout }: { handleLogout: () => void }): JSX.Element => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <ChevronDown className="cursor-pointer" />
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
-      <DropdownMenuItem>Profile</DropdownMenuItem>
-      <DropdownMenuItem>Settings</DropdownMenuItem>
-      <DropdownMenuItem>Notification</DropdownMenuItem>
-      <DropdownMenuItem>Logout</DropdownMenuItem>
+      <DropdownMenuItem onClick={(handleLogout)}>Logout</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 );

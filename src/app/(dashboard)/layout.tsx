@@ -13,22 +13,31 @@ interface User {
 
 export default function Dashboard({ children }: any) {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState("");
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user') ?? "{}") as User;
+    if(!user?.role){
+      router.push('/login')
+    }
     const userRole = user.role;
     if (userRole === UserRole.ADMIN) {
       setIsAdmin(true);
+      setUsername(user.username)
     }
   }, []);
 
   useEffect(() => {
     const checkAdmin = () => {
       const user = JSON.parse(sessionStorage.getItem('user') ?? "{}") as User;
-      const userRole = user.role;
-      if (userRole === UserRole.ADMIN && !pathname.includes('/admin')) {
+       if(!user?.role){
+      router.push('/login')
+    }
+    setUsername(user?.username)
+    const userRole = user.role.toUpperCase();
+      if (userRole === UserRole.ADMIN && !pathname.includes('/admin') && !pathname.includes('/dashboard')) {
         router.push('/admin' + pathname);
       } else if (userRole !== UserRole.ADMIN && pathname.includes('/admin')) {
         router.push(pathname.replace('/admin', ''));
@@ -45,7 +54,7 @@ export default function Dashboard({ children }: any) {
         </TooltipProvider>
       </div>
       <div className="flex flex-col w-full h-screen">
-        <Navbar />
+        <Navbar username={username} />
         <div className="flex-1 container overflow-y-auto">{children}</div>
       </div>
     </div>
